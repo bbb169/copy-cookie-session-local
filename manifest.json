@@ -1,11 +1,17 @@
 {
     "manifest_version": 3,
     "name": "Copy Cookie",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "Extension to copy cookies across the domains specially localhost.",
-    "permissions": ["cookies", "activeTab"],
+    "permissions": ["cookies", "activeTab", "sessions"],
     "host_permissions": [
         "*://*/*"
+    ],
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["contentScript.js"]
+      }
     ],
     "action": {
         "default_popup": "popup.html",
