@@ -1,3 +1,5 @@
+const copyContentSet = new Set(['localStorage', 'sessionStorage', 'cookies']);
+
 // When the popup Paste Button is clicked
 const onCopyButtonClick = () => {
     chrome.tabs.query(
@@ -7,6 +9,12 @@ const onCopyButtonClick = () => {
             active: true,
         },
         tab => {
+            chrome.tabs.sendMessage(tab[0].id, { name: "from_pupop_get_storages" }, function(response) {
+                if (response) {
+                    localStorage.copyStorageData = JSON.stringify(response)
+                }
+            });
+
             chrome.cookies.getAll({ url: tab[0].url }, cookie => {
                 localStorage.copyCookieData = JSON.stringify(cookie);
                 setTimeout(() => handlePopupUI('copy'), 100);
@@ -31,9 +39,13 @@ const removeOldCookies = (cookies, index, url, callback) => {
 // When the popup Paste Button is clicked
 const onPasteButtonClick = async () => {
     let copyCookieData;
+    let copyStorageData
     try {
         copyCookieData = localStorage.copyCookieData
             ? JSON.parse(localStorage.copyCookieData)
+            : null;
+        copyStorageData = localStorage.copyStorageData
+            ? JSON.parse(localStorage.copyStorageData)
             : null;
     } catch (e) {
         return alert('Error parsing cookies. Please try again.');
@@ -41,9 +53,6 @@ const onPasteButtonClick = async () => {
 
     if (!copyCookieData)
         return alert('Uh-Oh! You need to copy the cookies first.');
-
-    let domain = document.getElementById('domainInput').value.trim();
-    if (!domain) domain = 'localhost';
 
     chrome.tabs.query(
         {
@@ -56,25 +65,33 @@ const onPasteButtonClick = async () => {
                 return alert('Uh-Oh! Tab with invalid URL.');
             }
 
-            chrome.cookies.getAll({ url: tab[0].url }, cookies => {
-                removeOldCookies(cookies, 0, tab[0].url, () => {
-                    copyCookieData.forEach(({ name, value, path }) => {
-                        try {
-                            chrome.cookies.set({
-                                url: tab[0].url,
-                                name,
-                                value,
-                                path,
-                                domain,
-                            });
-                        } catch (error) {
-                            console.error(`There was an error: ${error}`);
-                        }
+            if (copyContentSet.has('cookies')) {
+                chrome.cookies.getAll({ url: tab[0].url }, cookies => {
+                    removeOldCookies(cookies, 0, tab[0].url, () => {
+                        copyCookieData.forEach(({ name, value, path }) => {
+                            try {
+                                chrome.cookies.set({
+                                    url: tab[0].url,
+                                    name,
+                                    value,
+                                });
+                            } catch (error) {
+                                console.error(`There was an error: ${error}`);
+                            }
+                        });
+                        onResetButtonClick('paste');
                     });
-                    onResetButtonClick('paste');
                 });
-            });
-        },
+            }
+
+            if (copyContentSet.has('localStorage')) {
+                chrome.tabs.sendMessage(tab[0].id, { name: "from_pupop_send_local_storage", value: copyStorageData.local });
+            }
+
+            if (copyContentSet.has('sessionStorage')) {
+                chrome.tabs.sendMessage(tab[0].id, { name: "from_pupop_send_session_storage", value: copyStorageData.session });
+            }
+        }
     );
 };
 
@@ -102,11 +119,6 @@ const handlePopupUI = action => {
     } else {
         successPasteLabel.setAttribute('style', 'display: none');
     }
-    if (action === 'copy' || copyCookieData) {
-        welcomeLabel.setAttribute('style', 'display: none');
-    } else if (action === 'reset') {
-        welcomeLabel.setAttribute('style', 'display: block');
-    }
 };
 
 // When the popup HTML has loaded
@@ -122,4 +134,22 @@ window.addEventListener('load', () => {
     document
         .getElementById('resetButton')
         .addEventListener('click', () => onResetButtonClick('reset'));
+
+    const radios = document
+    .getElementsByClassName('radio')
+
+    for (let index = 0; index < radios.length; index++) {
+        const element = radios[index];
+        element.checked = true;
+        element.addEventListener('click', (evt) => {
+            if (copyContentSet.has(evt.target.value)) {
+                copyContentSet.delete(evt.target.value)
+                evt.target.checked = false
+                evt.target.removeAttribute('checked')
+            } else {
+                copyContentSet.add(evt.target.value)
+                evt.target.checked = true
+            }
+        })
+    }
 });
