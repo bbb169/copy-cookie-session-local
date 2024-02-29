@@ -67,20 +67,18 @@ const onPasteButtonClick = async () => {
 
             if (copyContentSet.has('cookies')) {
                 chrome.cookies.getAll({ url: tab[0].url }, cookies => {
-                    removeOldCookies(cookies, 0, tab[0].url, () => {
-                        copyCookieData.forEach(({ name, value, path }) => {
-                            try {
-                                chrome.cookies.set({
-                                    url: tab[0].url,
-                                    name,
-                                    value,
-                                });
-                            } catch (error) {
-                                console.error(`There was an error: ${error}`);
-                            }
-                        });
-                        onResetButtonClick('paste');
+                    copyCookieData.forEach(({ name, value, path }) => {
+                        try {
+                            chrome.cookies.set({
+                                url: tab[0].url,
+                                name,
+                                value,
+                            });
+                        } catch (error) {
+                            console.error(`There was an error: ${error}`);
+                        }
                     });
+                    onResetButtonClick('paste');
                 });
             }
 
