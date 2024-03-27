@@ -139,14 +139,14 @@ window.addEventListener('load', () => {
     for (let index = 0; index < radios.length; index++) {
         const element = radios[index];
         element.checked = true;
-        element.addEventListener('click', (evt) => {
-            if (copyContentSet.has(evt.target.value)) {
-                copyContentSet.delete(evt.target.value)
-                evt.target.checked = false
-                evt.target.removeAttribute('checked')
+        element.parentElement.addEventListener('click', (evt) => {
+            if (copyContentSet.has(element.value)) {
+                copyContentSet.delete(element.value)
+                element.checked = false
+                element.removeAttribute('checked')
             } else {
-                copyContentSet.add(evt.target.value)
-                evt.target.checked = true
+                copyContentSet.add(element.value)
+                element.checked = true
             }
         })
     }

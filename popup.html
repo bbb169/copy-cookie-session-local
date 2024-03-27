@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
     <head>
+        <meta charset="UTF-8">
         <style>
             body {
                 min-width: 320px;
@@ -31,13 +32,25 @@
             .titile {
                 font-weight: 600;
                 font-size: 14px;
+                text-align: center;
             }
-            .radioRows {
+            .radio-rows {
                 font-size: 14px;
                 font-weight: 600;
                 display: flex;
                 justify-content: space-around;
                 align-items: center;
+                flex-direction: column;
+            }
+
+            .radio-rows button {
+                margin: 10px 0;
+                padding: 5px 10px;
+                display: flex;
+                align-items: center;
+            }
+            .radio-rows input {
+                margin-top: 0;
             }
             .logoWrapper {
                 flex: 1;
@@ -107,7 +120,6 @@
                 background-color: #3498db;
                 border: unset;
                 border-radius: 4px;
-                text-transform: uppercase;
                 color: #fff;
                 cursor: pointer;
             }
@@ -148,21 +160,21 @@
     <body>
         <span class="versionLabel">v2.0.2</span>
         <div id="container">
-            <div class="titile">Choose the content you need to copy</div>
-            <div class="radioRows">
-                localStorage:<input class="radio" type="radio" name="localStorage" value="localStorage" />
-                SessionStorage:<input class="radio" type="radio" name="SessionStorage" value="sessionStorage" />
-                Cookies:<input class="radio" type="radio" name="Cookies" value="cookies" />
+            <div class="titile">选择你要拷贝的数据</div>
+            <div class="radio-rows">
+                <button class="radio-row">localStorage:<input class="radio" type="radio" name="localStorage" value="localStorage" /></button>
+                <button class="radio-row">SessionStorage:<input class="radio" type="radio" name="SessionStorage" value="sessionStorage" /></button>
+                <button class="radio-row">Cookies:<input class="radio" type="radio" name="Cookies" value="cookies" /></button>
             </div>
             <div class="formWrapper1">
                 <div id="successPasteLabel" class="successPasteLabel">
                     <div class="successCopy">
                         <img class="successIcon" src="images/success.png" />
-                        <span>Pasted Successfully!</span>
+                        <span>拷贝成功</span>
                     </div>
                 </div>
                 <div class="buttonWrapper">
-                    <button id="copyButton">Copy</button>
+                    <button id="copyButton">拷贝</button>
                 </div>
             </div>
             <div class="formWrapper2">
@@ -171,29 +183,9 @@
                     <span>Copied Successfully!</span>
                 </div>
                 <div class="buttonWrapper">
-                    <button id="pasteButton">Paste</button>
-                    <button id="resetButton">Reset</button>
+                    <button id="pasteButton">粘贴</button>
+                    <button id="resetButton">重置</button>
                 </div>
-            </div>
-            <div class="footer">
-                <a
-                    class="link"
-                    target="_blank"
-                    href="https://chrome.google.com/webstore/detail/copy-cookie/efgblkeenphclkonjikaanjnlconlkfp"
-                >
-                    WebStore
-                </a>
-                <span
-                    >Made with <img src="images/heart.png" /> for the
-                    world</span
-                >
-                <a
-                    class="link"
-                    target="_blank"
-                    href="https://github.com/avaneeshtripathi/copy-cookie"
-                >
-                    GitHub
-                </a>
             </div>
         </div>
     </body>
