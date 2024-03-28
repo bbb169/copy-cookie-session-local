@@ -46,6 +46,7 @@
             .radio-rows button {
                 margin: 10px 0;
                 padding: 5px 10px;
+                width: 140px;
                 display: flex;
                 align-items: center;
             }
@@ -160,7 +161,7 @@
     <body>
         <span class="versionLabel">v2.0.2</span>
         <div id="container">
-            <div class="titile">选择你要拷贝的数据</div>
+            <div class="titile">选择你要拷贝或清除的数据</div>
             <div class="radio-rows">
                 <button class="radio-row">localStorage:<input class="radio" type="radio" name="localStorage" value="localStorage" /></button>
                 <button class="radio-row">SessionStorage:<input class="radio" type="radio" name="SessionStorage" value="sessionStorage" /></button>
@@ -175,6 +176,7 @@
                 </div>
                 <div class="buttonWrapper">
                     <button id="copyButton">拷贝</button>
+                    <button id="clearButton">清除</button>
                 </div>
             </div>
             <div class="formWrapper2">

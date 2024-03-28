@@ -23,18 +23,40 @@ const onCopyButtonClick = () => {
     );
 };
 
-const removeOldCookies = (cookies, index, url, callback) => {
-    if (!cookies[index]) return callback();
+const removeOldCookies = (cookies, index, url) => {
+    if (!cookies[index]) return;
 
     try {
         chrome.cookies.remove({
             url: url + cookies[index].path,
             name: cookies[index].name,
-        }, () => removeOldCookies(cookies, index + 1, url, callback));
+        }, () => removeOldCookies(cookies, index + 1, url));
     } catch (e) {
         console.error(`There was an error removing the cookies: ${error}`, cookies[index].name);
     }
 };
+
+const clearStorages = () => {
+    chrome.tabs.query(
+        {
+            status: 'complete',
+            windowId: chrome.windows.WINDOW_ID_CURRENT,
+            active: true,
+        },
+        tab => {
+            chrome.tabs.sendMessage(tab[0].id, { name: "from_pupop_clear_storages", value: Array.from(copyContentSet.values()).join(',') }, function(response) {
+                document
+                    .getElementById('clearButton').innerHTML = '已清除'
+            });
+
+            if (copyContentSet.has('cookies')) {
+                chrome.cookies.getAll({ url: tab[0].url }, cookies => {
+                    removeOldCookies(cookies, 0, tab[0].url);
+                });
+            }
+        },
+    );
+}
 
 // When the popup Paste Button is clicked
 const onPasteButtonClick = async () => {
@@ -126,6 +148,9 @@ window.addEventListener('load', () => {
     document
         .getElementById('copyButton')
         .addEventListener('click', onCopyButtonClick);
+    document
+        .getElementById('clearButton')
+        .addEventListener('click', clearStorages);
     document
         .getElementById('pasteButton')
         .addEventListener('click', onPasteButtonClick);

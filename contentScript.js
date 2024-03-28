@@ -2,8 +2,6 @@
 
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    console.log("Message received in content script:", message);
-    
     // 可以在这里对消息进行处理
     if (message.name === "from_pupop_get_storages") {
         
@@ -46,6 +44,17 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
                 const element = message.value[key];
                 sessionStorage.setItem(key, element)
             }
+        }
+    }
+
+    if (message.name === "from_pupop_clear_storages") {
+        console.log('from_pupop_clear_storages', message.value);
+
+        if (message.value.includes('sessionStorage')) {
+            sessionStorage.clear();
+        }
+        if (message.value.includes('localStorage')) {
+            localStorage.clear();
         }
     }
 
